@@ -1,3 +1,2 @@
-import {createAnnouncements} from './data.js';
-
-console.log(createAnnouncements());
+// import {createAnnouncements} from './data.js';
+import './popup.js';
