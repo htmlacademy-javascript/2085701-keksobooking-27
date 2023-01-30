@@ -104,4 +104,4 @@ const createAnnouncement = (index) => {
 
 const createAnnouncements = () => Array.from({length: 10}, (_, avatarIndex) => createAnnouncement(avatarIndex + 1));
 
-export {createAnnouncements};
+export { createAnnouncements};
