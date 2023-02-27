@@ -6,16 +6,23 @@ const TYPE_MIN = {
   'palace': 10000,
 };
 
-const COUNT = {
-  '1': '1',
+const roomsToGuests = {
+  '1': ['1'],
   '2': ['2', '1'],
   '3': ['3', '2', '1'],
-  '100': '0',
+  '100': ['0'],
+};
+
+const guestsToRooms = {
+  '0': ['100'],
+  '1': ['1', '2', '3'],
+  '2': ['3', '2'],
+  '3': ['3'],
 };
 
 const userForm = document.querySelector('.ad-form');
-const titleField = userForm.querySelector('#title');
 const typeField = userForm.querySelector('#type');
+const addressField = userForm.querySelector('#address');
 const priceField = userForm.querySelector('#price');
 const timeInField = userForm.querySelector('#timein');
 const timeOutField = userForm.querySelector('#timeout');
@@ -26,15 +33,7 @@ const pristine = new Pristine(userForm, {
   classTo: 'ad-form__element',
   errorClass: 'ad-form__element--invalid',
   errorTextParent: 'ad-form__element',
-  errorTextTag: 'div',
-  errorTextClass: 'ad-form__element-error-text',
-});
-
-function validateTitle(value) {
-  return value.length >= 30 && value.length <= 100;
-}
-
-pristine.addValidator(titleField, validateTitle, 'От 30 до 100 символов');
+}, true);
 
 function onUnitChange() {
   priceField.placeholder = TYPE_MIN[typeField.value];
@@ -49,8 +48,21 @@ function validateMinPrice() {
   return TYPE_MIN[typeField.value] <= (priceField.value);
 }
 
+const onPriceChange = () => {
+  pristine.validate(priceField);
+  pristine.validate(typeField);
+};
+
+const onTypeChange = () => {
+  pristine.validate(priceField);
+  pristine.validate(typeField);
+};
+
 pristine.addValidator(priceField, validateMinPrice, getMinPriceErrorMessage);
 pristine.addValidator(typeField, validateMinPrice, getMinPriceErrorMessage);
+
+roomsField.addEventListener('change', onPriceChange);
+capacityField.addEventListener('change', onTypeChange);
 
 function changeTimeIn () {
   timeOutField.value = timeInField.value;
@@ -64,15 +76,37 @@ timeInField.addEventListener('change', changeTimeIn);
 timeOutField.addEventListener('change', changeTimeOut);
 
 function validateRoomsCount () {
-  return COUNT[roomsField.value].includes(capacityField.value);
+  return roomsToGuests[roomsField.value].includes(capacityField.value);
+}
+
+function getCapacityCountErrorMessage () {
+  return `Указанное количество комнат может вместить ${roomsToGuests[roomsField.value].join(' или ')} гостей`;
 }
 
 function getRoomsCountErrorMessage () {
-  return `${roomsField.value} не может быть использована для ${capacityField.value} гостей`;
+  return `Для указанного числа гостей необходимо ${guestsToRooms[capacityField.value].join(' или ')} комнаты`;
 }
 
-pristine.addValidator(roomsField, validateRoomsCount, getRoomsCountErrorMessage);
+const onCapacityChange = () => {
+  pristine.validate(roomsField);
+  pristine.validate(capacityField);
+};
+
+const onRoomsNumberChange = () => {
+  pristine.validate(roomsField);
+  pristine.validate(capacityField);
+};
+
+const onAddressFocus = () => {
+  addressField.blur();
+};
+
+pristine.addValidator(roomsField, validateRoomsCount, getCapacityCountErrorMessage);
 pristine.addValidator(capacityField, validateRoomsCount, getRoomsCountErrorMessage);
+
+roomsField.addEventListener('change', onRoomsNumberChange);
+capacityField.addEventListener('change', onCapacityChange);
+addressField.addEventListener('change', onAddressFocus);
 
 userForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
