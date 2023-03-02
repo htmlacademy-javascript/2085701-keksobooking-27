@@ -1,11 +1,4 @@
-import { createCards } from './popup.js';
-import { turnAdFormOff, turnAdFormOn } from './form.js';
-import { turnFilterOff, turnFilterOn } from './filter.js';
-import { createAnnouncements} from './data.js';
+import './form.js';
 import './user-form.js';
-
-turnFilterOff();
-turnFilterOn();
-turnAdFormOff();
-turnAdFormOn();
-createCards(createAnnouncements());
+import './map.js';
+import './slider.js';

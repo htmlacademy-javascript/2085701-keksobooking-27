@@ -1,3 +1,5 @@
+import { turnFilterOff, turnFilterOn } from './filter.js';
+
 const adFormElement = document.querySelector('.ad-form');
 const fieldsets = adFormElement.querySelectorAll('fieldset');
 
@@ -6,6 +8,7 @@ const turnAdFormOff = () => {
   fieldsets.forEach((fieldset) => {
     fieldset.disabled = true;
   });
+  turnFilterOff();
 };
 
 const turnAdFormOn = () => {
@@ -13,6 +16,9 @@ const turnAdFormOn = () => {
   fieldsets.forEach((fieldset) => {
     fieldset.disabled = false;
   });
+  turnFilterOn();
 };
 
-export { turnAdFormOff, turnAdFormOn };
+turnAdFormOff();
+
+export { turnAdFormOn };

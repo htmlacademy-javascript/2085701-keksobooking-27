@@ -7,7 +7,6 @@ const TYPE_DICTIONARY = {
 };
 
 const announcementCardTemplate = document.querySelector('#card').content.querySelector('.popup');
-const announcementList = document.querySelector('#map-canvas');
 
 const renderDescription = (cardElement, description) => {
   const descriptionElement = cardElement.querySelector('.popup__description');
@@ -70,13 +69,7 @@ const createCardElement = ({ author, offer }) => {
   renderDescription(announcementCard, offer.description);
   renderFeatures(announcementCard, offer.features);
   renderPhoto(announcementCard, offer.photos, offer.title);
-  announcementList.append(announcementCard);
+  return announcementCard;
 };
 
-const createCards = (anoncements) => {
-  anoncements.forEach((anoncement) => {
-    createCardElement(anoncement);
-  });
-};
-
-export {createCards};
+export {createCardElement};
