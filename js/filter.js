@@ -15,4 +15,8 @@ const turnFilterOn = () => {
   }
 };
 
-export { turnFilterOff, turnFilterOn };
+const filtersReset = () => {
+  filterElement.reset();
+};
+
+export { turnFilterOff, turnFilterOn, filtersReset };

@@ -1,4 +1,4 @@
-import { turnFilterOff, turnFilterOn } from './filter.js';
+import { turnFilterOff, turnFilterOn, filtersReset } from './filter.js';
 
 const adFormElement = document.querySelector('.ad-form');
 const fieldsets = adFormElement.querySelectorAll('fieldset');
@@ -19,6 +19,9 @@ const turnAdFormOn = () => {
   turnFilterOn();
 };
 
-turnAdFormOff();
+const adFormReset = () => {
+  filtersReset();
+  adFormElement.reset();
+};
 
-export { turnAdFormOn };
+export { turnAdFormOn, turnAdFormOff, adFormReset };

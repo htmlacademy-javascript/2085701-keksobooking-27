@@ -1,4 +1,4 @@
-import {resetMainPinMarker, resetMap} from './map.js';
+import { adFormReset } from './form.js';
 
 const TYPE_MIN = {
   'bungalow': 0,
@@ -116,7 +116,7 @@ userForm.addEventListener('submit', (evt) => {
   const isValide = pristine.validate();
   if (isValide) {
     userForm.submit();
-    resetMap();
-    resetMainPinMarker();
+    adFormReset();
+    pristine.reset();
   }
 });

@@ -1,28 +1,12 @@
-import { turnAdFormOn } from './form.js';
 import { createCardElement } from './popup.js';
-import { createAnnouncements} from './data.js';
 
-const centerCoordinates = {
-  lat: 35.66376,
-  lng: 139.7839,
-};
-const MAP_SCALE = 12;
+const OFFERS_COUNT = 10;
+
 const userForm = document.querySelector('.ad-form');
 const addressField = userForm.querySelector('#address');
 
-
-const map = L.map('map-canvas')
-  .on('load', () => {
-    turnAdFormOn();
-  })
-  .setView(centerCoordinates, MAP_SCALE);
-
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
+const map = L.map('map-canvas');
+const markerGroup = L.layerGroup().addTo(map);
 
 const mainPinIcon = L.icon({
   iconUrl: './img/main-pin.svg',
@@ -31,43 +15,71 @@ const mainPinIcon = L.icon({
 }
 );
 
-const mainPinMarker = L.marker(centerCoordinates, {
-  draggable: true,
-  icon: mainPinIcon,
-});
-
-mainPinMarker.addTo(map);
-
-mainPinMarker.on('moveend', (evt) => {
-  addressField.value = `${evt.target.getLatLng()}`;
-});
-
-const resetMainPinMarker = mainPinMarker.setLatLng(centerCoordinates);
-const resetMap = map.setView(centerCoordinates, MAP_SCALE);
-
 const icon = L.icon({
   iconUrl: './img/pin.svg',
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
-const markerGroup = L.layerGroup().addTo(map);
+const mainPinMarker = L.marker({
+  lat: 0,
+  lng: 0,
+},
+{
+  draggable: true,
+  icon: mainPinIcon,
+},
+);
 
-const createMarker = (announcement) => {
-  const marker = L.marker(announcement.location, {
-    icon,
-  },
-  );
-  marker
-    .addTo(markerGroup)
-    .bindPopup(createCardElement(announcement));
+const getMainPinMarker = (coordinates) => {
+  mainPinMarker.setLatLng(coordinates);
+  addressField.value = `${coordinates.lat}, ${coordinates.lng}`;
+  mainPinMarker.addTo(map);
 };
 
-createAnnouncements().forEach((announcement) => {
-  createMarker(announcement);
-});
+function initMap (coordinates, scale) {
+  map.setView(coordinates, scale);
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
+  getMainPinMarker(coordinates);
+}
 
-//удаляем слой
-// markerGroup.clearLayers();
+const setOnMapLoad = (cb) => {
+  map.on('load', cb);
+};
 
-export {resetMainPinMarker, resetMap};
+const setOnMainPinMove = () => {
+  mainPinMarker.on('move', (evt) => {
+    const LatLng = evt.target.getLatLng();
+    const lat = LatLng.lat.toFixed(5);
+    const lng = LatLng.lng.toFixed(5);
+    addressField.value = `${lat}, ${lng}`;
+  });
+};
+
+const createAdPinMarkers = (offers) => {
+  offers.forEach((offer) => {
+    const marker = L.marker({
+      lat: offer.location.lat,
+      lng: offer.location.lng,
+    },
+    {
+      icon,
+    },
+    );
+    marker
+      .addTo(markerGroup)
+      .bindPopup(createCardElement(offer));
+  });
+};
+
+const setAdPins = (offers) => {
+  markerGroup.clearLayers();
+  createAdPinMarkers(offers.slice(0, OFFERS_COUNT));
+};
+
+export {initMap, setAdPins, setOnMapLoad, setOnMainPinMove};
